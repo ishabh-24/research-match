@@ -1,137 +1,94 @@
 # ResearchMatch
 
-A two-sided marketplace connecting university researchers with study participants.
+ResearchMatch connects participants with paid (or unpaid) university studies and gives researchers tools to publish studies and manage applicants.
 
-## Architecture
+## What the app currently does
 
-Monorepo with two packages:
+- Participant dashboard with matched studies based on profile preferences.
+- In-dashboard preference editing (interests, compensation, time, remote preference) with live match refresh.
+- Participant applications view with statuses.
+- Researcher dashboard with stats, applications, and quick access to own studies.
+- Researcher study creation flow.
+- Study browse + detailed study view.
+- Landing page with featured studies and streamlined stats.
+
+## Roles
+
+- `PARTICIPANT`: browse studies, get matches, update profile preferences, apply/withdraw.
+- `RESEARCHER`: create studies, review applicants, accept/reject applications.
+
+## Tech stack
 
 | Package | Stack | Port |
 |---------|-------|------|
-| `client/` | React + Vite + TypeScript | 5173 |
-| `server/` | Node.js + Express + TypeScript | 4000 |
+| `client/` | React + Vite + TypeScript | `5173` |
+| `server/` | Node.js + Express + TypeScript | `4000` |
 
-**Database**: PostgreSQL via Prisma ORM (config in `server/prisma/`)
+Database: PostgreSQL via Prisma (`server/prisma/`).
 
-## Getting Started
+## Quick start
 
-### 1. Install all dependencies
+1. Install dependencies:
+
 ```bash
 npm run install:all
 ```
 
-### 2. Configure environment
+2. Set environment variables:
 
-**Server** — copy and fill in `server/.env`:
 ```bash
 cp server/.env.example server/.env
-```
-
-**Client** — copy and fill in `client/.env`:
-```bash
 cp client/.env.example client/.env
 ```
 
-### 3. Set up the database
+3. Set up DB:
+
 ```bash
-npm run db:push      # apply schema to the DB
-npm run db:seed      # populate with test data
-npm run db:studio    # optional: Prisma Studio GUI
+npm run db:push
+npm run db:seed
 ```
 
-### 4. Run both servers concurrently
+4. Run app:
+
 ```bash
 npm run dev
-# Client: http://localhost:5173
-# Server: http://localhost:4000
 ```
 
-Or run individually:
-```bash
-cd client && npm run dev   # React (Vite)
-cd server && npm run dev   # Express (ts-node + nodemon)
-```
+Client: `http://localhost:5173`  
+Server: `http://localhost:4000`
 
-## Project Structure
+## Important routes
 
-```
-researchmatch/
-├── client/                   # React + Vite frontend
-│   └── src/
-│       ├── App.tsx           # Root router (react-router-dom)
-│       ├── pages/            # One file per page/route
-│       │   ├── Landing.tsx
-│       │   ├── Login.tsx
-│       │   ├── Signup.tsx
-│       │   ├── Dashboard.tsx
-│       │   ├── Studies.tsx
-│       │   ├── StudyDetail.tsx
-│       │   ├── ProfileSetup.tsx
-│       │   ├── participant/Applications.tsx
-│       │   └── researcher/
-│       │       ├── Dashboard.tsx
-│       │       └── NewStudy.tsx
-│       ├── components/       # Reusable UI components
-│       └── lib/
-│           ├── api.ts        # Axios client → Express server
-│           └── auth.ts       # JWT storage helpers
-│
-├── server/                   # Node.js + Express backend
-│   └── src/
-│       ├── index.ts          # Express entry point
-│       ├── routes/           # One router per resource
-│       │   ├── auth.ts       # POST /auth/register, /auth/login
-│       │   ├── studies.ts    # GET/POST /studies + /studies/matches
-│       │   ├── applications.ts
-│       │   ├── participant.ts
-│       │   ├── researcher.ts
-│       │   └── notifications.ts
-│       ├── middleware/
-│       │   └── auth.ts       # JWT verify (requireAuth, requireRole)
-│       └── lib/              # Shared business logic
-│           ├── prisma.ts
-│           ├── matching.ts
-│           ├── email.ts
-│           ├── validations.ts
-│           └── utils.ts
-│   └── prisma/
-│       ├── schema.prisma
-│       └── seed.ts
-```
+### Frontend
 
-## API Routes
+- `/` landing page
+- `/studies` browse studies
+- `/studies/:id` detailed study view
+- `/dashboard` participant dashboard
+- `/participant/applications` participant applications
+- `/researcher/dashboard` researcher dashboard
+- `/researcher/studies/new` new study form
 
-| Method | Route | Auth | Description |
-|--------|-------|------|-------------|
-| POST | `/api/auth/register` | — | Create account |
-| POST | `/api/auth/login` | — | Sign in, receive JWT |
-| GET | `/api/studies` | — | Browse published studies |
-| GET | `/api/studies/matches` | PARTICIPANT | Smart-matched studies |
-| GET | `/api/studies/:id` | — | Study detail |
-| POST | `/api/studies` | RESEARCHER | Create study |
-| POST | `/api/applications/:studyId` | PARTICIPANT | Apply to study |
-| DELETE | `/api/applications/:studyId` | PARTICIPANT | Withdraw application |
-| GET | `/api/participant/profile` | PARTICIPANT | Get profile |
-| PUT | `/api/participant/profile` | PARTICIPANT | Update profile |
-| GET | `/api/participant/applications` | PARTICIPANT | My applications |
-| GET | `/api/researcher/studies` | RESEARCHER | My studies |
-| PATCH | `/api/researcher/applications/:id` | RESEARCHER | Accept/reject |
-| GET | `/api/notifications` | any | Notifications |
+### API
 
-## User Roles
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/studies`
+- `GET /api/studies/:id`
+- `GET /api/studies/matches` (participant)
+- `PUT /api/participant/profile` (participant)
+- `GET /api/participant/applications` (participant)
+- `POST /api/studies` (researcher)
+- `GET /api/researcher/studies` (researcher)
+- `GET /api/researcher/applications` (researcher)
+- `PATCH /api/researcher/applications/:id` (researcher)
 
-| Role | Access |
-|------|--------|
-| `PARTICIPANT` | Browse studies, apply, manage profile |
-| `RESEARCHER` | Create/manage studies, review applicants |
-| `ADMIN` | (future) Verify researchers, moderate |
-
-## Key Commands
+## Useful commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start both client + server |
+| `npm run dev` | Start client + server |
 | `npm run install:all` | Install all dependencies |
-| `npm run db:push` | Push Prisma schema to DB |
+| `npm run db:push` | Apply Prisma schema |
+| `npm run db:seed` | Seed sample data |
 | `npm run db:studio` | Open Prisma Studio |
-| `npm run db:seed` | Seed test data |
