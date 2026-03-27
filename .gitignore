@@ -1,0 +1,68 @@
+# -------------------------------
+# Dependencies
+# -------------------------------
+node_modules/
+client/node_modules/
+server/node_modules/
+.pnp
+.pnp.js
+
+# -------------------------------
+# Build output / caches
+# -------------------------------
+dist/
+build/
+out/
+.next/
+client/dist/
+server/dist/
+coverage/
+.turbo/
+.cache/
+.vite/
+*.tsbuildinfo
+next-env.d.ts
+
+# -------------------------------
+# Environment files / secrets
+# -------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+
+# -------------------------------
+# Logs
+# -------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# -------------------------------
+# OS / editor files
+# -------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# -------------------------------
+# Local Prisma DB artifacts
+# -------------------------------
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/dev.db
+server/prisma/dev.db
+server/prisma/dev.db-journal
+server/prisma/migrations/dev.db
