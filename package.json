@@ -12,6 +12,7 @@
     "db:seed": "npm run db:seed --prefix server"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "typescript": "^6.0.2"
   }
 }
