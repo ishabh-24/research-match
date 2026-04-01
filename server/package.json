@@ -25,7 +25,8 @@
     "nodemailer": "^7.0.7",
     "resend": "^3.2.0",
     "stripe": "^15.7.0",
-    "zod": "^3.23.4"
+    "zod": "^3.23.4",
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -37,8 +38,10 @@
     "@types/react": "^19.2.14",
     "nodemon": "^3.1.0",
     "prisma": "^5.13.0",
-    "react": "^18.3.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
