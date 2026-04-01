@@ -9,6 +9,7 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { setToken } from "../lib/auth"
 import { motion } from "framer-motion"
+import axios from "axios"
 
 const signUpSchema = z.object({
     name: z.string().min(3, "Name must be at least 3 characters long"),
@@ -40,8 +41,18 @@ export default function Signup() {
             setToken(response.data.token)
             navigate("/profile/setup")
         } catch (error) {
-            console.log(error)
-            alert("Something went wrong")
+            console.error(error)
+            let message = "Something went wrong. Please try again."
+            if (axios.isAxiosError(error)) {
+                const data = error.response?.data as { message?: string } | undefined
+                if (data?.message) message = data.message
+                else if (error.code === "ERR_NETWORK")
+                    message =
+                        "Cannot reach the API. Check VITE_API_URL, that the server is running, and CORS (CLIENT_URL on the server)."
+                else if (error.response?.status === 500)
+                    message = "Server error — check API logs, DATABASE_URL, and JWT_SECRET."
+            }
+            alert(message)
         }
     }
 
