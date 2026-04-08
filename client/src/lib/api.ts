@@ -26,7 +26,7 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Response interceptor — handle 401 globally
+// Response interceptor — handle 401 globally (but not on login/register, so users see real error messages)
 api.interceptors.response.use(
     (response) => response,
     (error) => {

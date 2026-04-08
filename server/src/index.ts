@@ -20,7 +20,7 @@
 //   Server runs on PORT env var, defaults to 4000
 // ============================================================
 
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
@@ -43,6 +43,16 @@ app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 app.use(express.json());
 
+// Minimal request logging (useful on Render when debugging 500s)
+app.use((req: Request, res: Response, next: NextFunction) => {
+    const start = Date.now();
+    res.on("finish", () => {
+        const ms = Date.now() - start;
+        console.log(`[http] ${req.method} ${req.path} -> ${res.statusCode} (${ms}ms)`);
+    });
+    next();
+});
+
 // ── Health Check ────────────────────────────────────────────
 app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
@@ -55,6 +65,12 @@ app.use("/api/participant", participantRouter);
 app.use("/api/researcher", researcherRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/applications", applicationsRouter);
+
+// Error handler (ensures exceptions show up in logs)
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    console.error("[unhandled]", err);
+    res.status(500).json({ message: "Internal server error" });
+});
 
 // ── Start ───────────────────────────────────────────────────
 app.listen(PORT, () => {

@@ -5,7 +5,7 @@
 // On success: call setToken(token), navigate to /dashboard
 // ============================================================
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { setToken, decodeToken } from "../lib/auth";
@@ -24,12 +24,17 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function Login() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const roleFromUrl = searchParams.get("role");
+    const defaultRole =
+        roleFromUrl === "RESEARCHER" || roleFromUrl === "PARTICIPANT" ? roleFromUrl : "PARTICIPANT";
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
             password: "",
-            role: "PARTICIPANT"
+            role: defaultRole
         }
     })
 
@@ -46,10 +51,13 @@ export default function Login() {
                 navigate("/dashboard");
             }
         } catch (error: any) {
-            console.log(error)
-            const msg = error.response?.data?.message || "Invalid credentials"
-            alert(msg)
-            navigate("/login")
+            console.error(error);
+            let msg = error.response?.data?.message ?? "Invalid credentials";
+            if (error.code === "ERR_NETWORK") {
+                msg =
+                    "Cannot reach the API. Check VITE_API_URL on Vercel and that the Render API is running.";
+            }
+            alert(msg);
         }
     }
 
